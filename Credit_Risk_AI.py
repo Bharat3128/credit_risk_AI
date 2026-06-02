@@ -1,6 +1,9 @@
 print("Credit Risk AI Project")
 
 import pandas as pd
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
 data = {
     "income": [50000, 60000, 55000, 80000, 75000],
@@ -14,10 +17,26 @@ print(df)
 x = df[["income", "credit_score", "loan_amount"]]
 y = df["defaulted"] 
 
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+model = DecisionTreeClassifier()
+model.fit(x_train, y_train)
+
+predictions = model.predict(x_test)
+
+accuracy = accuracy_score(y_test, predictions)
+
+print("Accuracy:", accuracy)
+
+new_prediction = model.predict([[60000, 680, 25000]])
+
+print("New Prediction:", new_prediction)
+
+
 from sklearn.tree import DecisionTreeClassifier
-model = Descisiontreeclassifier()
+model = DecisionTreeClassifier()
 model.fit(x, y)
 
 prediction = model.predict([[60000, 680, 25000]])
 
-print(Predication)
+print("Prediction:", prediction)
