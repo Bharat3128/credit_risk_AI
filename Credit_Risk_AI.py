@@ -10,23 +10,13 @@ print("========== Credit Risk AI Project ==========")
 # Dataset
 # ----------------------------------
 
-data = {
-    "income": [50000, 60000, 55000, 80000, 75000, 45000, 70000, 90000, 120000, 150000],
-
-    "credit_score": [550, 400, 450, 500, 600, 700, 650, 720, 760, 780],
-
-    "loan_amount": [20000, 25000, 22000, 30000, 28000, 18000, 26000, 35000, 50000, 60000],
-
-    "defaulted": [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
-}
-
-# Create DataFrame
-
-df = pd.DataFrame(data)
+df = pd.read_csv("data/loan_data.csv")
 
 print("\nTraining Dataset:\n")
 
 print(df)
+print("\nMissing Values Check:\n")
+print(df.isnull().sum())
 
 # ----------------------------------
 # Features and Target
