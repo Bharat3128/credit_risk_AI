@@ -3,6 +3,8 @@ import pandas as pd
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
+from datetime import datetime
+import os
 
 print("========== Credit Risk AI Project ==========")
 
@@ -133,11 +135,28 @@ if result[0] == 1:
     print("Sorry for the inconvenience.")
 
     if reasons:
-
         print("\nReason(s):")
-
         for reason in reasons:
             print("-", reason)
+
+    # AI Recommendations
+    recommendations = []
+    
+    if credit_score < 650:
+        recommendations.append("Improve credit score above 650")
+    
+    if loan_amount > income:
+        recommendations.append("Reduce loan amount below annual income")
+    
+    if risk_percentage >= 80:
+        recommendations.append("High financial risk detected")
+    
+    recommendations.append("Maintain stable income and repayment history")
+    
+    if recommendations:
+        print("\nAI Recommendations:")
+        for rec in recommendations:
+            print("-", rec)
 
 else:
 
@@ -150,5 +169,29 @@ else:
 # ----------------------------------
 # End
 # ----------------------------------
+
+#prediction logging
+#----------------------------------
+
+log_data = pd.DataFrame({
+    "timestamp": [datetime.now()],
+    "income": [income],
+    "credit_score": [credit_score],
+    "loan_amount": [loan_amount],
+    "risk_percentage": [risk_percentage],
+    "risk_level": [risk_level],
+    "loan_status": [
+        "REJECTED" if result[0] == 1 else "APPROVED"]
+})
+
+#save Predication History
+log_data.to_csv(
+    "prediction_history.csv", 
+    mode="a", 
+    header=not pd.io.common.file_exists("loan_prediction_log.csv"),
+    index=False
+    )
+print("\nPrediction Saved successfully.")
+
 
 print("\n========== Thank You ==========")
