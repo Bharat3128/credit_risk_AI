@@ -70,13 +70,14 @@ def register_new_user(users):
 # ----------------------------------
 
 def login(max_attempts=3):
-    """Login system with registration option"""
+    """Login system with registration and password reset options"""
     print("\n========== LOGIN SYSTEM ==========")
     print("1. Login")
     print("2. Register New Account")
-    print("3. Exit")
+    print("3. Reset Password")
+    print("4. Exit")
     
-    choice = input("\nSelect option (1-3): ").strip()
+    choice = input("\nSelect option (1-4): ").strip()
     
     if choice == "2":
         users = load_credentials()
@@ -84,6 +85,11 @@ def login(max_attempts=3):
             return True
         return login(max_attempts)
     elif choice == "3":
+        users = load_credentials()
+        if reset_password(users):
+            return True
+        return login(max_attempts)
+    elif choice == "4":
         print("✗ Exiting...")
         sys.exit(0)
     elif choice != "1":
@@ -95,7 +101,7 @@ def login(max_attempts=3):
     
     for attempt in range(max_attempts):
         try:
-            username = input("\nEnter Username: ").strip()
+            username = input("\nEnter Username: ").strip().lower()
             password = input("Enter Password: ").strip()
             
             if not username or not password:
@@ -115,6 +121,35 @@ def login(max_attempts=3):
             sys.exit(0)
     
     print("\n✗ Maximum login attempts exceeded. Access denied.")
+    return False
+
+def reset_password(users):
+    """Allow user to reset their password"""
+    print("\n========== PASSWORD RESET ==========")
+    username = input("Enter Username: ").strip().lower()
+    
+    if not username:
+        print("⚠ Username cannot be empty.")
+        return False
+    
+    if username not in users:
+        print(f"⚠ Username '{username}' not found!")
+        return False
+    
+    new_password = input("Enter New Password: ").strip()
+    if not new_password:
+        print("⚠ Password cannot be empty.")
+        return False
+    
+    confirm_password = input("Confirm New Password: ").strip()
+    if new_password != confirm_password:
+        print("⚠ Passwords do not match!")
+        return False
+    
+    users[username] = new_password
+    if save_credentials(users):
+        print(f"✓ Password reset successful for '{username}'!")
+        return True
     return False
 
 # ----------------------------------
