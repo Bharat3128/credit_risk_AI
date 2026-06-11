@@ -5,8 +5,36 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from datetime import datetime
 import os
+import getpass
 
-print("========== Credit Risk AI Project ==========")
+# ----------------------------------
+# LOGIN SYSTEM
+# ----------------------------------
+
+def login():
+    """Simple login system"""
+    print("\n========== LOGIN SYSTEM ==========")
+    username = input("Enter Username: ")
+    password = getpass.getpass("Enter Password: ")
+    
+    # Simple credentials (for demo)
+    valid_users = {"admin": "admin123", "user": "password"}
+    
+    if username in valid_users and valid_users[username] == password:
+        print(f"\n✓ Login Successful! Welcome, {username}!")
+        return True
+    else:
+        print("\n✗ Invalid credentials. Access denied.")
+        return False
+
+# ----------------------------------
+# ASK FOR LOGIN
+# ----------------------------------
+
+if not login():
+    exit()
+
+print("\n========== Credit Risk AI Project ==========")
 
 # ----------------------------------
 # Dataset
@@ -166,6 +194,68 @@ if credit_score < 650:
 if loan_amount > income:
     reasons.append("Loan amount exceeds annual income")
 
+
+#----------------------------------
+# FRAUD DETECTION
+#----------------------------------
+
+# ----------------------------------
+# Fraud Detection
+# ----------------------------------
+
+print("\n========== Fraud Analysis ==========")
+
+fraud_warnings = []
+fraud_score = 0
+
+# Check 1: Loan to Income Ratio
+if loan_amount > income * 3:
+    fraud_warnings.append(
+        "Loan amount is unusually high compared to income"
+    )
+    fraud_score += 40
+
+# Check 2: Low Credit + Large Loan
+if credit_score < 550 and loan_amount > income:
+    fraud_warnings.append(
+        "High risk loan request with low credit score and large loan amount"
+    )
+    fraud_score += 35
+
+# Check 3: Very Low Credit Score
+if credit_score < 400:
+    fraud_warnings.append(
+        "Extremely low credit score indicates high default risk"
+    )
+    fraud_score += 25
+
+# Check 4: Extreme Loan Amount
+if loan_amount > income * 5:
+    fraud_warnings.append(
+        "Loan amount exceeds 5x annual income - severely suspicious"
+    )
+    fraud_score += 30
+
+# Determine Fraud Risk Level
+if fraud_score >= 60:
+    fraud_risk = "HIGH"
+elif fraud_score >= 30:
+    fraud_risk = "MEDIUM"
+else:
+    fraud_risk = "LOW"
+
+# Display Fraud Analysis
+print(f"\nFraud Risk Score: {fraud_risk}")
+print(f"Risk Score Points: {fraud_score}/100")
+
+if fraud_warnings:
+    print("\nFraud Warning(s):")
+    for warning in fraud_warnings:
+        print(f"  ⚠ {warning}")
+else:
+    print("\n✓ No suspicious activity detected.")
+
+
 # ----------------------------------
 # Final Decision
 # ----------------------------------
@@ -228,12 +318,40 @@ log_data = pd.DataFrame({
 
 #save Predication History
 log_data.to_csv(
-    "prediction_history.csv", 
-    mode="a", 
-    header=not pd.io.common.file_exists("loan_prediction_log.csv"),
+    "prediction_history.csv",
+    mode="a",
+    header=not os.path.exists("prediction_history.csv"),
     index=False
-    )
+)
 print("\nPrediction Saved successfully.")
 
+# ----------------------------------
+# DASHBOARD
+# ----------------------------------
 
-print("\n========== Thank You ==========")
+print("\n" + "="*50)
+print("   LOAN APPLICATION ASSESSMENT DASHBOARD")
+print("="*50)
+
+print("\n📊 APPLICANT INFORMATION:")
+print(f"  Income: ${income:,.2f}")
+print(f"  Credit Score: {credit_score}")
+print(f"  Loan Amount: ${loan_amount:,.2f}")
+print(f"  Loan Term: {loan_years} years")
+print(f"  Monthly EMI: ${emi:,.2f}")
+
+print("\n🔍 RISK ANALYSIS:")
+print(f"  Model Prediction Risk: {risk_percentage:.2f}%")
+print(f"  Risk Level: {risk_level}")
+print(f"  Affordability Status: {affordability}")
+
+print("\n⚠️  FRAUD ASSESSMENT:")
+print(f"  Fraud Risk: {fraud_risk}")
+print(f"  Fraud Score: {fraud_score}/100")
+
+print("\n✅ FINAL DECISION:")
+loan_status = "REJECTED" if result[0] == 1 else "APPROVED"
+print(f"  Loan Status: {loan_status}")
+
+print("\n" + "="*50)
+print("========== Thank You ==========")
