@@ -5,34 +5,48 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from datetime import datetime
 import os
-import getpass
+import sys
 
 # ----------------------------------
 # LOGIN SYSTEM
 # ----------------------------------
 
-def login():
-    """Simple login system"""
+def login(max_attempts=3):
+    """Simple login system with retry mechanism"""
     print("\n========== LOGIN SYSTEM ==========")
-    username = input("Enter Username: ")
-    password = getpass.getpass("Enter Password: ")
     
-    # Simple credentials (for demo)
     valid_users = {"admin": "admin123", "user": "password"}
     
-    if username in valid_users and valid_users[username] == password:
-        print(f"\n✓ Login Successful! Welcome, {username}!")
-        return True
-    else:
-        print("\n✗ Invalid credentials. Access denied.")
-        return False
+    for attempt in range(max_attempts):
+        try:
+            username = input("Enter Username: ").strip()
+            password = input("Enter Password: ").strip()
+            
+            if not username or not password:
+                print("⚠ Username and password cannot be empty.")
+                print(f"Attempts remaining: {max_attempts - attempt - 1}\n")
+                continue
+            
+            if username in valid_users and valid_users[username] == password:
+                print(f"\n✓ Login Successful! Welcome, {username}!")
+                return True
+            else:
+                print("\n✗ Invalid credentials. Please try again.")
+                print(f"Attempts remaining: {max_attempts - attempt - 1}\n")
+        
+        except KeyboardInterrupt:
+            print("\n\n✗ Login cancelled by user.")
+            sys.exit(0)
+    
+    print("\n✗ Maximum login attempts exceeded. Access denied.")
+    return False
 
 # ----------------------------------
 # ASK FOR LOGIN
 # ----------------------------------
 
 if not login():
-    exit()
+    sys.exit(0)
 
 print("\n========== Credit Risk AI Project ==========")
 
@@ -89,15 +103,27 @@ print(f"\nModel Accuracy: {accuracy * 100:.2f}%")
 # User Input
 # ----------------------------------
 
+def get_valid_float(prompt, min_value=0):
+    """Get and validate float input from user"""
+    while True:
+        try:
+            value = float(input(prompt))
+            if value < min_value:
+                print(f"⚠ Error: Value must be at least {min_value}. Please try again.")
+                continue
+            return value
+        except ValueError:
+            print("⚠ Error: Please enter a valid number.")
+        except KeyboardInterrupt:
+            print("\n✗ Input cancelled by user.")
+            sys.exit(0)
+
 print("\n========== Loan Risk Assessment ==========")
 
-income = float(input("Enter Annual Income: "))
-
-credit_score = float(input("Enter Credit Score: "))
-
-loan_amount = float(input("Enter Loan Amount: "))
-
-loan_years = float(input("Enter Loan Term (Years): "))
+income = get_valid_float("Enter Annual Income (₹): ", min_value=1)
+credit_score = get_valid_float("Enter Credit Score (300-850): ", min_value=1)
+loan_amount = get_valid_float("Enter Loan Amount (₹): ", min_value=1)
+loan_years = get_valid_float("Enter Loan Term (Years): ", min_value=0.5)
 
 
 # ----------------------------------
@@ -143,26 +169,26 @@ print("Risk Level:", risk_level)
 
 
 #----------------------------------------------------
-
 # EMI Calculation
-
 #---------------------------------------------------
 
 annual_interest_rate = 10
-
 monthly_interest_rate = annual_interest_rate / 12 / 100
-
 months = loan_years * 12
 
-emi = (
-    loan_amount *
-    monthly_interest_rate *
-    (1 + monthly_interest_rate) ** months
-) / (
-    ((1 + monthly_interest_rate) ** months )- 1
-)
+# Handle edge case where interest rate is 0
+if monthly_interest_rate == 0:
+    emi = loan_amount / months
+else:
+    emi = (
+        loan_amount *
+        monthly_interest_rate *
+        (1 + monthly_interest_rate) ** months
+    ) / (
+        ((1 + monthly_interest_rate) ** months) - 1
+    )
 
-print(f"\nEstimated Monthly EMI: {emi:.2f}")
+print(f"\nEstimated Monthly EMI: ₹{emi:,.2f}")
 
 
 #------------------------------------------------
@@ -173,13 +199,12 @@ monthly_income = income / 12
 
 if emi > monthly_income * 0.5:
     affordability = "HIGH FINANCIAL BURDEN"
-
 elif emi > monthly_income * 0.3:
     affordability = "MODERATE"
-
 else:
     affordability = "AFFORDABLE"
-print("Affordability Status:", affordability)
+
+print(f"Affordability Status: {affordability}")
 # ----------------------------------
 # Business Rules
 # ----------------------------------
@@ -302,28 +327,33 @@ else:
 # End
 # ----------------------------------
 
-#prediction logging
-#----------------------------------
+# Prediction Logging
+# ----------------------------------
 
-log_data = pd.DataFrame({
-    "timestamp": [datetime.now()],
-    "income": [income],
-    "credit_score": [credit_score],
-    "loan_amount": [loan_amount],
-    "risk_percentage": [risk_percentage],
-    "risk_level": [risk_level],
-    "loan_status": [
-        "REJECTED" if result[0] == 1 else "APPROVED"]
-})
+try:
+    log_data = pd.DataFrame({
+        "timestamp": [datetime.now()],
+        "income": [income],
+        "credit_score": [credit_score],
+        "loan_amount": [loan_amount],
+        "risk_percentage": [risk_percentage],
+        "risk_level": [risk_level],
+        "fraud_risk": [fraud_risk],
+        "loan_status": [
+            "REJECTED" if result[0] == 1 else "APPROVED"]
+    })
 
-#save Predication History
-log_data.to_csv(
-    "prediction_history.csv",
-    mode="a",
-    header=not os.path.exists("prediction_history.csv"),
-    index=False
-)
-print("\nPrediction Saved successfully.")
+    # Save Prediction History
+    log_data.to_csv(
+        "prediction_history.csv",
+        mode="a",
+        header=not os.path.exists("prediction_history.csv"),
+        index=False
+    )
+    print("\n✓ Prediction saved successfully.")
+
+except Exception as e:
+    print(f"\n✗ Error saving prediction: {str(e)}")
 
 # ----------------------------------
 # DASHBOARD
