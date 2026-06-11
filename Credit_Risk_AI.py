@@ -6,20 +6,96 @@ from sklearn.metrics import accuracy_score
 from datetime import datetime
 import os
 import sys
+import json
+
+# ----------------------------------
+# CREDENTIALS FILE MANAGEMENT
+# ----------------------------------
+
+CREDENTIALS_FILE = "user_credentials.json"
+
+def load_credentials():
+    """Load credentials from file or create default ones"""
+    if os.path.exists(CREDENTIALS_FILE):
+        try:
+            with open(CREDENTIALS_FILE, 'r') as f:
+                return json.load(f)
+        except:
+            pass
+    
+    # Default credentials if file doesn't exist
+    return {
+        "admin": "admin123",
+        "user": "password",
+        "anjali": "chintu3128",
+        "chintu": "goddanti"
+    }
+
+def save_credentials(users):
+    """Save credentials to file"""
+    try:
+        with open(CREDENTIALS_FILE, 'w') as f:
+            json.dump(users, f, indent=2)
+        return True
+    except Exception as e:
+        print(f"⚠ Error saving credentials: {str(e)}")
+        return False
+
+def register_new_user(users):
+    """Allow user to register a new account"""
+    print("\n========== REGISTRATION ==========")
+    username = input("Enter new Username: ").strip().lower()
+    
+    if not username:
+        print("⚠ Username cannot be empty.")
+        return False
+    
+    if username in users:
+        print(f"⚠ Username '{username}' already exists!")
+        return False
+    
+    password = input("Enter Password: ").strip()
+    if not password:
+        print("⚠ Password cannot be empty.")
+        return False
+    
+    users[username] = password
+    if save_credentials(users):
+        print(f"✓ Registration successful! Welcome, {username}!")
+        return True
+    return False
 
 # ----------------------------------
 # LOGIN SYSTEM
 # ----------------------------------
 
 def login(max_attempts=3):
-    """Simple login system with retry mechanism"""
+    """Login system with registration option"""
     print("\n========== LOGIN SYSTEM ==========")
+    print("1. Login")
+    print("2. Register New Account")
+    print("3. Exit")
     
-    valid_users = {"admin": "admin123", "user": "password"}
+    choice = input("\nSelect option (1-3): ").strip()
+    
+    if choice == "2":
+        users = load_credentials()
+        if register_new_user(users):
+            return True
+        return login(max_attempts)
+    elif choice == "3":
+        print("✗ Exiting...")
+        sys.exit(0)
+    elif choice != "1":
+        print("⚠ Invalid option. Please try again.")
+        return login(max_attempts)
+    
+    # Load credentials for login
+    users = load_credentials()
     
     for attempt in range(max_attempts):
         try:
-            username = input("Enter Username: ").strip()
+            username = input("\nEnter Username: ").strip()
             password = input("Enter Password: ").strip()
             
             if not username or not password:
@@ -27,7 +103,7 @@ def login(max_attempts=3):
                 print(f"Attempts remaining: {max_attempts - attempt - 1}\n")
                 continue
             
-            if username in valid_users and valid_users[username] == password:
+            if username in users and users[username] == password:
                 print(f"\n✓ Login Successful! Welcome, {username}!")
                 return True
             else:
