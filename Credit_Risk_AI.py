@@ -391,7 +391,54 @@ if fraud_warnings:
 else:
     print("\n✓ No suspicious activity detected.")
 
+#----------------------------------
+# LOAN ELIGIBILITY DECISION
+#----------------------------------
 
+print("\n========== LOAN ELIGIBILITY SCORE ==========")
+
+eligibility_score = 50
+
+# Income Evaluation
+if income >= 100000:
+    eligibility_score += 20
+elif income >= 50000:
+    eligibility_score += 10
+
+# Credit Score Evaluation
+if credit_score >= 750:
+    eligibility_score += 20
+elif credit_score >= 700:
+    eligibility_score += 15
+elif credit_score >= 650:
+    eligibility_score += 10
+
+# Affordability Evaluation
+if affordability == "AFFORDABLE":
+    eligibility_score += 20
+elif affordability == "MODERATE":
+    eligibility_score += 15
+
+# Fraud Risk Evaluation
+if fraud_risk == "LOW":
+    eligibility_score += 15
+elif fraud_risk == "MEDIUM":
+    eligibility_score -= 15
+elif fraud_risk == "HIGH":
+    eligibility_score -= 30
+
+# Determine Eligibility Status
+if eligibility_score >= 80:
+    eligibility_status = "HIGHLY ELIGIBLE"
+elif eligibility_score >= 60:
+    eligibility_status = "GOOD"
+elif eligibility_score >= 40:
+    eligibility_status = "MODERATE"
+else:
+    eligibility_status = "LOW"
+
+print(f"\nEligibility Score: {eligibility_score}/100")
+print(f"Eligibility Status: {eligibility_status}")
 # ----------------------------------
 # Final Decision
 # ----------------------------------
