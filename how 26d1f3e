@@ -1,0 +1,16 @@
+[33m26d1f3e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Added loan eligibility scoring and improved fraud analysis
+[33mbbdb5b4[m Added loan eligibility scoring system
+[33m6adf09e[m Added fraud detection engine
+[33ma642e01[m[33m ([m[1;31morigin/main[m[33m)[m Add password reset feature to login system for better user management
+[33m32fed71[m Implement flexible login system with user registration and persistent credentials storage
+[33m37ad9bb[m Fix all bugs: password visibility, input validation, EMI calculation, error handling, and typos
+[33m3d9603d[m Add login system, enhanced fraud detection with scoring, and assessment dashboard
+[33m87290eb[m Resolve merge conflict: keep local version with corrected file path
+[33m409e6ea[m Initial Credit Risk AI project
+[33mcd2136d[m Enhance loan assessment with recommendations and logging
+[33m26a8f96[m Refactor data loading and add missing values check
+[33m242ad9c[m Refactor Credit Risk AI project structure and logic
+[33mecc34a1[m Updated Credit Risk AI Project
+[33m754a38d[m Added train test split and model accuracy
+[33m3ca0505[m Add files via upload
+[33m46240cf[m Initial commit

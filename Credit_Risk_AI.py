@@ -543,7 +543,30 @@ print(f"  Loan Status: {loan_status}")
 
 print("\n" + "="*50)
 print("========== Thank You ==========")
-# Day 5 Updates:
-# Added loan eligibility scoring engine
-# Improved fraud detection workflow
-# Enhanced AI loan decision analysis
+#DAY ---6
+print("\n========LOAN ANALYTICS DASHBOARD========")
+history_pdf = pd.read_csv(
+    "prediction_history.csv",
+    on_bad_lines='skip'
+)
+total_applications = len(history_pdf)
+
+approved_loans = len(
+    history_pdf[history_pdf["loan_status"] == "APPROVED"]
+    )
+rejected_loans = len(
+    history_pdf[history_pdf["loan_status"] == "REJECTED"]
+    )
+high_risk_loans = len(
+    history_pdf[history_pdf["risk_level"] == "HIGH"]
+    )
+
+medium_risk_loans = len(
+    history_pdf[history_pdf["risk_level"] == "MEDIUM"]
+    )
+
+print(f"\nTotal Loan Applications: {total_applications}")
+print(f"Approved Loans: {approved_loans}")
+print(f"Rejected Loans: {rejected_loans}")
+print(f"High-Risk Loans: {high_risk_loans}")
+print(f"Medium-Risk Loans: {medium_risk_loans}")
