@@ -543,6 +543,7 @@ print(f"  Loan Status: {loan_status}")
 
 print("\n" + "="*50)
 print("========== Thank You ==========")
+<<<<<<< HEAD
 #DAY ---6
 print("\n========LOAN ANALYTICS DASHBOARD========")
 history_pdf = pd.read_csv(
@@ -570,3 +571,9 @@ print(f"Approved Loans: {approved_loans}")
 print(f"Rejected Loans: {rejected_loans}")
 print(f"High-Risk Loans: {high_risk_loans}")
 print(f"Medium-Risk Loans: {medium_risk_loans}")
+=======
+# Day 5 Updates:
+# Added loan eligibility scoring engine
+# Improved fraud detection workflow
+# Enhanced AI loan decision analysis
+>>>>>>> b974c00d4e7c2856d4cb5940a550e0d3868fbff4
